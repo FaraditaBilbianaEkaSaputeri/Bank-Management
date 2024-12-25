@@ -1,21 +1,16 @@
-package utils;
+package com.uap.bankmanagement.utils;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
+import static org.mockito.Mockito.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.uap.bankmanagement.exception.BankAccountException;
-import org.uap.bankmanagement.model.User;
-import org.uap.bankmanagement.utils.JsonHelper;
-import org.uap.bankmanagement.utils.UserAccountManager;
 
-import java.io.IOException;
+import com.uap.bankmanagement.exception.BankAccountException;
+import com.uap.model.User;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
-
-
+import org.json.JSONArray;
+import org.json.JSONObject;
+import java.io.IOException;
 
 class UserAccountManagerTest {
     
@@ -61,28 +56,35 @@ class UserAccountManagerTest {
 
         assertFalse(loginSuccess);
     }
-
+    
     @Test
     void testDepositToAccount() throws IOException {
-
+        // Arrange
         doNothing().when(mockJsonHelper).updateUserBalance(anyString(), anyDouble());
-
         User.setBalance(100.0);
+        String accountNumber = "expectedAccountNumber";
+        User.setAccountNumber(accountNumber); // Set the account number for the test
 
+        // Act
         manager.depositToAccount(50.0);
 
-        verify(mockJsonHelper).updateUserBalance(anyString(), eq(150.0));
+        // Assert
+        verify(mockJsonHelper).updateUserBalance(eq(accountNumber), eq(150.0));
     }
 
     @Test
     void testWithdrawFromAccount_Success() throws IOException, BankAccountException {
+        // Arrange
         doNothing().when(mockJsonHelper).updateUserBalance(anyString(), anyDouble());
-
         User.setBalance(100.0);
+        String accountNumber = "expectedAccountNumber";
+        User.setAccountNumber(accountNumber);
 
+        // Act
         manager.withdrawFromAccount(50.0);
 
-        verify(mockJsonHelper).updateUserBalance(anyString(), eq(50.0));
+        // Assert
+        verify(mockJsonHelper).updateUserBalance(eq(accountNumber), eq(-50.0));
     }
 
     @Test
